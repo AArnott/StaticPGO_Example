@@ -29,7 +29,7 @@ bin\Release\net6.0\win-x64\publish\App.exe
 Write-Host ""
 Write-Host "Converting traces to MIBC..."
 
-# reset the env vars
+# reset the env vars to default values
 $env:COMPlus_EnableEventPipe=0
 $env:COMPlus_ReadyToRun=1
 $env:COMPlus_TieredCompilation=1
@@ -49,7 +49,13 @@ Remove-Item "bin" -Recurse
 Remove-Item "obj" -Recurse
 
 # not sure what --partial does, but PGO data is not embedded if it's not set when Composite mode is enabled
-dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--embed-pgo-data%3b--mibc%3a$mibcPath" # -v:n > publish2.log
+
+Write-Host ""
+Write-Host "Running 'dotnet publish' using pgo data, see publish2.log for details..."
+
+# -v:d > publish2.log
+
+dotnet publish -c Release -r win-x64 /p:PublishTrimmed=true /p:TrimMode=link /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--embed-pgo-data%3b--mibc%3a$mibcPath" -v:n > publish2.log
 
 Write-Host ""
 Write-Host "Results with StaticPGO:"
