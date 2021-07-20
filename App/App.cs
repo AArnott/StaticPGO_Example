@@ -6,6 +6,7 @@ public static class Tests
 {
     static void Main()
     {
+        Console.WriteLine("Running...");
         var ff = new ClassBFactoryFactory();
         var sw = Stopwatch.StartNew();
 
