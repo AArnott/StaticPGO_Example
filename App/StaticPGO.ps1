@@ -32,10 +32,11 @@ Write-Host "Converting traces to MIBC..."
 # reset the env vars
 $env:COMPlus_EnableEventPipe=0
 $env:COMPlus_ReadyToRun=1
-$env:COMPlus_TieredPGO=1 # do we need TieredPGO to apply static pgo and benefit from it?
-$env:COMPlus_TC_QuickJitForLoops=1 # same here
+
 $env:COMPlus_TieredCompilation=1
 $env:COMPlus_TC_CallCounting=1
+$env:COMPlus_TC_QuickJitForLoops=0
+$env:COMPlus_TieredPGO=1 # for some reason it's needed
 
 # wait some time while the traces are being prepared
 Start-Sleep -Seconds 5
@@ -48,7 +49,8 @@ dotnet-pgo dump $mibcPath "$mibcPath.txt"
 Remove-Item "bin" -Recurse
 Remove-Item "obj" -Recurse
 
-dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--embed-pgo-data%3b--mibc%3a$mibcPath" App.csproj
+# not sure what --partial does, but PGO data is not embedded if it's not set when Composite mode is enabled
+dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--partial%3b--embed-pgo-data%3b--mibc%3a$mibcPath"
 
 Write-Host ""
 Write-Host "Results with StaticPGO:"
