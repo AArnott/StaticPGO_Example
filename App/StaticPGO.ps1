@@ -48,7 +48,7 @@ dotnet-pgo dump $mibcPath "$mibcPath.txt"
 Remove-Item "bin" -Recurse
 Remove-Item "obj" -Recurse
 
-dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--embed-pgo-data%3b--mibc%3b$mibcPath" App.csproj
+dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=true /p:PublishReadyToRunUseCrossgen2=true /p:PublishReadyToRunComposite=true "/p:PublishReadyToRunCrossgen2ExtraArgs=--embed-pgo-data%3b--mibc%3a$mibcPath" App.csproj
 
 Write-Host ""
 Write-Host "Results with StaticPGO:"
