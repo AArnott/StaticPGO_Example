@@ -48,8 +48,6 @@ dotnet-pgo dump $mibcPath "$mibcPath.txt"
 Remove-Item "bin" -Recurse
 Remove-Item "obj" -Recurse
 
-# not sure what --partial does, but PGO data is not embedded if it's not set when Composite mode is enabled
-
 Write-Host ""
 Write-Host "Running 'dotnet publish' using pgo data, see publish2.log for details..."
 
