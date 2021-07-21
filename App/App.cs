@@ -10,16 +10,13 @@ public static class Tests
         var ff = new ClassBFactoryFactory();
         var sw = Stopwatch.StartNew();
 
-        for (int iter = 0; iter < 10; iter++)
+        for (int iter = 0; iter < 5; iter++)
         {
             sw.Restart();
-            for (int i = 0; i < 5000000; i++)
-            {
+
+            for (int i = 0; i < 50000000; i++)
                 Test(ff);
-                Test(ff);
-                Test(ff);
-                Test(ff);
-            }
+
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
         }

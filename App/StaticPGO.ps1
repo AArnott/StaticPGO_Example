@@ -38,7 +38,7 @@ $env:COMPlus_TC_QuickJitForLoops=0
 $env:COMPlus_TieredPGO=0
 
 # wait some time while the traces are being prepared
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 2
 # not sure why it's "used by another process" still so I make a copy:
 Copy-Item $nettracePath -Destination "$nettracePath.nettrace"
 
