@@ -1,7 +1,6 @@
 # StaticPGO_Example
 
-This project demonstrates how to collect a static profile (PGO) for a simple console app.
-And compares it with DynamicPGO and the default mode.
+This project demonstrates how to collect a static profile (PGO) for a simple console app in order to make it faster.
 
 ### Prerequisites ###
 *  The **latest** daily build of .NET 6.0 from [here](https://github.com/dotnet/installer/blob/main/README.md#installers-and-binaries) (should be at least 7/25/2021)
