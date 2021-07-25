@@ -90,10 +90,10 @@ is optimized into:
 ```csharp
 void DisposeMe(IDisposable d)
 {
-    if (d is MyType) // PGO tells us `d` is mostly `MyType` here
-        ((MyType)d).Dispose(); // can be inlined now, e.g. to no-op if MyType.Dispose is empty
+    if (d is MyType)           // E.g. Profile states that Dispose here is mostly called on MyType
+        ((MyType)d).Dispose(); // can be inlined now, e.g. to no-op if MyType::Dispose is empty
     else
-        d.Dispose(); // a cold fallback, just in case
+        d.Dispose();           // a cold fallback, just in case
 }
 ```
 * Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478)
@@ -111,7 +111,7 @@ is transformed into:
 ```csharp
 void DoWork(int a)
 {
-    // PGO told the jit that the DoWork1 branch was never (or rarely) taken
+    // E.g. Profile states that DoWork1 branch was never (or rarely) taken
     if (a <= 0)
         DoWork2();
     else
