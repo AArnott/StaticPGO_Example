@@ -15,7 +15,7 @@
 
 		<!-- Quite a weird syntax for passing additional args to crossgen2 including path to MIBC
 		     I hope we'll come up with something better than this in the future -->
-		<PublishReadyToRunCrossgen2ExtraArgs>--inputbubble%3b--instruction-set:avx2%3b--embed-pgo-data%3b--mibc%3apgo.mibc</PublishReadyToRunCrossgen2ExtraArgs>
+		<PublishReadyToRunCrossgen2ExtraArgs>--embed-pgo-data%3b--mibc%3apgo.mibc</PublishReadyToRunCrossgen2ExtraArgs>
 	</PropertyGroup>
 
 	<ItemGroup>
