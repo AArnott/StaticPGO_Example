@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
+		<EnableDefaultItems>false</EnableDefaultItems>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+	</PropertyGroup>
+
+	<!-- Options for 'final' dotnet publish where we consume pgo.mibc that we collected in a test run: -->
+	<PropertyGroup Condition="$(CollectMibc) != 'true'">
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+
+		<!-- Quite a weird syntax for passing additional args to crossgen2 including path to MIBC
+		     I hope we'll come up with something better than this in the future -->
+		<PublishReadyToRunCrossgen2ExtraArgs>--inputbubble%3b--instruction-set:avx2%3b--embed-pgo-data%3b--mibc%3apgo.mibc</PublishReadyToRunCrossgen2ExtraArgs>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="App.cs" />
+		<ProjectReference Include="MyLib\MyLib.csproj" />
+	</ItemGroup>
+
+
+
+	<!-- A task that executed after 'dotnet publish' to run & collect a static profile (pgo.mibc file) -->
+	<Target Name="GenerateMIBC" AfterTargets="Publish" Condition="$(CollectMibc) == 'true'">
+
+		<!-- Special envvars for collecting a static profile: we need to disable R2R, tier1, enable tracing, etc. -->
+		<ItemGroup>
+			<Env Include="DOTNET_EnableEventPipe=1" />
+			<Env Include="DOTNET_EventPipeConfig=Microsoft-Windows-DotNETRuntime:0x1F000080018:5" />
+			<Env Include="DOTNET_EventPipeOutputPath=trace.nettrace" />
+			<Env Include="DOTNET_ReadyToRun=0" />
+			<Env Include="DOTNET_TieredPGO=1" />
+			<Env Include="DOTNET_TieredCompilation=1" />
+			<Env Include="DOTNET_TC_CallCounting=0" />
+			<Env Include="DOTNET_TC_QuickJitForLoops=1" />
+			<Env Include="DOTNET_JitCollect64BitCounts=1" />
+		</ItemGroup>
+
+		<!-- Run & collect traces: -->
+		<Exec Command="App.exe" EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
+
+		<!-- Not sure how to workaround "trace is used by another process so I'm just duplicating it: -->
+		<Copy SourceFiles="$(PublishDir)trace.nettrace" DestinationFiles="$(PublishDir)traceCopy.nettrace" />
+
+		<!-- Convert nettrace to mibc, make sure 'dotnet-pgo' tool is installed: -->
+		<Exec Command="dotnet-pgo create-mibc -t $(PublishDir)traceCopy.nettrace -o $(MSBuildThisFileDirectory)/pgo.mibc"
+		      EnvironmentVariables="@(Env)" />
+	</Target>
+
+
+	
+	<!-- Run app that was optimized with opt.mibc profile: -->
+	<Target Name="RunFinal" AfterTargets="Publish" Condition="$(CollectMibc) != 'true'">
+		<Exec Command="App.exe" WorkingDirectory="$(PublishDir)" />
+	</Target>
+</Project>
