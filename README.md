@@ -76,4 +76,27 @@ and re-compile everything in tier0 with instrumentations (edge counters and clas
 demonstrates the difference between Static and Dynamic PGOs:
 
 ![image](https://user-images.githubusercontent.com/523221/126896425-9229a6a9-9427-469c-805f-30ecd4c534ab.png)
+  
 With the static one you only need to collect it in advance.
+
+
+### What exactly PGO can optimize for us?
+* Most virtual calls are devirtualized, e.g.
+```csharp
+void DisposeMe(IDisposable d)
+{
+    d.Dispose();
+}
+```
+is optimized into:
+```csharp
+void DisposeMe(IDisposable d)
+{
+    if (d is MyType) // PGO tells us `d` is mostly `MyType` here
+        ((MyType)d).Dispose(); // can be inlined now, e.g. to no-op if MyType.Dispose is empty
+    else
+        d.Dispose(); // a cold fallback, just in case
+}
+```
+* Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478)
+* JIT tries to keep all hot blocks together and moves the cold ones closer to the end of methods.
