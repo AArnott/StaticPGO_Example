@@ -9,13 +9,13 @@ This project demonstrates how to collect a static profile (PGO) for a simple con
 ### Usage
 First, we need to build a special version of our app and have a test run:
 ```ps1
-dotnet publish -c Release -r win-x64 /p:CollectMibc=true
+dotnet publish -c Release -r win-x64 /p:CollectMibc=true # or linux-x64, osx-arm64, etc..
 ```
 The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO_Example/blob/c1ba286cc4e63734ab7c0b3f81349948d39427f2/App.csproj#L29-L53) to do that job.
 
 Then re-build the app using static PGO we collected:
-```
-dotnet publish -c Release -r win-x64 /p:CollectMibc=false
+```ps1
+dotnet publish -c Release -r win-x64
 ```
 
 Now compare the performance results after PGO with simple `dotnet run -c Release`.

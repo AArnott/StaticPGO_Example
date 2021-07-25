@@ -35,19 +35,18 @@
 		<ItemGroup>
 			<!-- NOTE: we can use 'dotnet trace' tool instead of these variables: -->
 			<Env Include="DOTNET_EnableEventPipe=1" />
-			<Env Include="DOTNET_EventPipeConfig=Microsoft-Windows-DotNETRuntime:0x1F000080018:5" />
+			<Env Include="DOTNET_EventPipeConfig=Microsoft-Windows-DotNETRuntime:0x1F000080018:5" /> <!-- I hope that category will have a meaningful name -->
 			<Env Include="DOTNET_EventPipeOutputPath=trace.nettrace" />
-			
-			<Env Include="DOTNET_ReadyToRun=0" />
-			<Env Include="DOTNET_TieredPGO=1" />
-			<Env Include="DOTNET_TieredCompilation=1" />
-			<Env Include="DOTNET_TC_CallCounting=0" />
-			<Env Include="DOTNET_TC_QuickJitForLoops=1" />
+
+			<Env Include="DOTNET_ReadyToRun=0" /> <!-- Disable AOT -->
+			<Env Include="DOTNET_TieredPGO=1" /> <!-- Enable instrumentation in tier0 -->
+			<Env Include="DOTNET_TC_CallCounting=0" /> <!-- Never promote methods to tier1 -->
+			<Env Include="DOTNET_TC_QuickJitForLoops=1" /> <!-- Don't bypass tier0 for methods with loops -->
 			<Env Include="DOTNET_JitCollect64BitCounts=1" />
 		</ItemGroup>
 
 		<!-- Run & collect traces: -->
-		<Exec Command="App.exe" EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
+		<Exec Command="dotnet $(ProjectName).dll" EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
 
 		<!-- Not sure how to workaround "trace is used by another process so I'm just duplicating it: -->
 		<Copy SourceFiles="$(PublishDir)trace.nettrace" DestinationFiles="$(PublishDir)traceCopy.nettrace" />
@@ -61,6 +60,6 @@
 	
 	<!-- Run app that was optimized with opt.mibc profile: -->
 	<Target Name="RunFinal" AfterTargets="Publish" Condition="$(CollectMibc) != 'true'">
-		<Exec Command="App.exe" WorkingDirectory="$(PublishDir)" />
+		<Exec Command="dotnet $(ProjectName).dll" WorkingDirectory="$(PublishDir)" />
 	</Target>
 </Project>
