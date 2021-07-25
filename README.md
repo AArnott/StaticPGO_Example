@@ -38,16 +38,16 @@ Running...
 2) Run with static pgo (steps from the **Usage** section above):
 ```
 Running...
-[0/9]: 21 ms.
-[1/9]: 21 ms.
-[2/9]: 21 ms.
-[3/9]: 21 ms.
-[4/9]: 21 ms.
-[5/9]: 21 ms.
-[6/9]: 21 ms.
-[7/9]: 21 ms.
-[8/9]: 21 ms.
-[9/9]: 21 ms.
+[0/9]: 19 ms.
+[1/9]: 19 ms.
+[2/9]: 19 ms.
+[3/9]: 19 ms.
+[4/9]: 19 ms.
+[5/9]: 19 ms.
+[6/9]: 18 ms.
+[7/9]: 18 ms.
+[8/9]: 18 ms.
+[9/9]: 18 ms.
 ```
 3) Run with dynamic PGO (steps from **Usage** aren't needed. Only just set the following env.variables in your console):
 ```
