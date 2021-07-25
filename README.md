@@ -74,7 +74,7 @@ DynamicPGO is easy to use, but you pay for it with a slower start, because we ne
 and re-compile everything in tier0 with instrumentations (edge counters and class probes). E.g. the following aspnet benchmark 
 demonstrates the difference between Static and Dynamic PGOs:
 
-![image](https://user-images.githubusercontent.com/523221/126896425-9229a6a9-9427-469c-805f-30ecd4c534ab.png)
+![image](https://user-images.githubusercontent.com/523221/126899669-f5a49151-5927-4d52-b252-de024b5399f6.png)
   
 With the static one you only need to collect it in advance.
 
