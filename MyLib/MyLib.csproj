@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-	<LangVersion>preview</LangVersion>
-	<EnableDefaultItems>false</EnableDefaultItems>
+    <LangVersion>preview</LangVersion>
+    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="MyClasses.cs" />
   </ItemGroup>
