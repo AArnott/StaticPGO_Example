@@ -90,8 +90,8 @@ is optimized into:
 ```csharp
 void DisposeMe(IDisposable d)
 {
-    if (d is MyType)           // E.g. Profile states that Dispose here is mostly called on MyType
-        ((MyType)d).Dispose(); // can be inlined now, e.g. to no-op if MyType::Dispose is empty
+    if (d is MyType)           // E.g. Profile states that Dispose here is mostly called on MyType.
+        ((MyType)d).Dispose(); // It can be inlined now (e.g. to no-op if MyType::Dispose() is empty)
     else
         d.Dispose();           // a cold fallback, just in case
 }
