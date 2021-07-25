@@ -11,9 +11,12 @@
 	<!-- Options for 'final' dotnet publish where we consume pgo.mibc that we collected in a test run: -->
 	<PropertyGroup Condition="$(CollectMibc) != 'true'">
 		<PublishReadyToRun>true</PublishReadyToRun>
+		
+		<!-- it's important to turn on Composite mode to merge all R2R images together
+                     so we won't lose the class probes info. -->
 		<PublishReadyToRunComposite>true</PublishReadyToRunComposite>
 
-		<!-- Quite a weird syntax for passing additional args to crossgen2 including path to MIBC
+		<!-- Quite a weird syntax for passing additional args to crossgen2
 		     I hope we'll come up with something better than this in the future -->
 		<PublishReadyToRunCrossgen2ExtraArgs>--embed-pgo-data%3b--mibc%3apgo.mibc</PublishReadyToRunCrossgen2ExtraArgs>
 	</PropertyGroup>
