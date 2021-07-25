@@ -99,4 +99,25 @@ void DisposeMe(IDisposable d)
 }
 ```
 * Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478)
-* JIT tries to keep all hot blocks together and moves the cold ones closer to the end of methods.
+* JIT tries to keep all hot blocks together and moves the cold ones closer to the end of methods, e.g.:
+```csharp
+void DoWork(int a)
+{
+    if (a > 0)
+        DoWork1();
+    else
+        DoWork2();
+}
+```
+is transformed into:
+```csharp
+void DoWork(int a)
+{
+    // PGO told the jit that the DoWork1 branch was never (or rarely) taken
+    if (a <= 0)
+        DoWork2();
+    else
+        DoWork1();
+}
+```
+* We can prejit (AOT) only the code that was touched during the test run using `--partial` option passed to crossgen2
