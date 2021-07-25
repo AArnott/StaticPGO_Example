@@ -18,7 +18,7 @@
 
 		<!-- Quite a weird syntax for passing additional args to crossgen2
 		     I hope we'll come up with something better than this in the future -->
-		<PublishReadyToRunCrossgen2ExtraArgs>--embed-pgo-data%3b--mibc%3apgo.mibc</PublishReadyToRunCrossgen2ExtraArgs>
+		<PublishReadyToRunCrossgen2ExtraArgs>--embed-pgo-data%3b--mibc%3a$(PgoData)</PublishReadyToRunCrossgen2ExtraArgs>
 	</PropertyGroup>
 
 	<ItemGroup>

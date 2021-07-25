@@ -15,7 +15,7 @@ The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO
 
 Then re-build the app using static PGO we collected:
 ```ps1
-dotnet publish -c Release -r win-x64
+dotnet publish -c Release -r win-x64 /p:PgoData=pgo.mibc
 ```
 
 Now compare the performance results after PGO with simple `dotnet run -c Release`.
