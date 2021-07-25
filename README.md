@@ -119,4 +119,4 @@ void DoWork(int a)
         DoWork1();
 }
 ```
-* We can prejit (AOT) only the code that was touched during the test run using `--partial` option passed to crossgen2
+* We can prejit (AOT) only the code that was touched during the test run using `--partial` option passed to crossgen2 - it should noticeably reduce binary size of R2R'd images.
