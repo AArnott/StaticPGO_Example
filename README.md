@@ -50,10 +50,10 @@ Running...
 [9/9]: 18 ms.
 ```
 3) Run with dynamic PGO (steps from **Usage** aren't needed. Only just set the following env.variables in your console):
-```
-DOTNET_ReadyToRun=0 # ignore AOT code
-DOTNET_TieredPGO=1 # enable dynamic pgo
-DOTNET_TC_QuickJitForLoops=1 # don't bypass tier0 for methods with loops
+```ps1
+DOTNET_ReadyToRun=0           # ignore AOT code
+DOTNET_TieredPGO=1            # enable dynamic pgo
+DOTNET_TC_QuickJitForLoops=1  # don't bypass tier0 for methods with loops
 ```
 ```
 Running...
