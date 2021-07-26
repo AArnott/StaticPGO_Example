@@ -1,5 +1,5 @@
 
-This project demonstrates how to collect a static profile (PGO) for a simple console app in order to make it faster.
+This project demonstrates how to collect a static profile (PGO aka Profile-Guided Optimization) for a simple console app in order to make it faster.
 
 
 ## What exactly PGO can optimize for us?
