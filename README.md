@@ -3,14 +3,15 @@ This project demonstrates how to collect a static profile (PGO) for a simple con
 
 
 ## What exactly PGO can optimize for us?
-* Most virtual calls are devirtualized, e.g.
+* Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478). Namely, this [code](https://github.com/dotnet/runtime/blob/c93bb62e33934c3b8b6b1d293612d44360483bd8/src/coreclr/jit/inlinepolicy.cpp#L1675-L1697).
+* Most virtual calls can be devirtualized using PGO data:
 ```csharp
 void DisposeMe(IDisposable d)
 {
     d.Dispose();
 }
 ```
-is optimized into:
+&nbsp;&nbsp;&nbsp;&nbsp;is optimized into:
 ```csharp
 void DisposeMe(IDisposable d)
 {
@@ -21,10 +22,11 @@ void DisposeMe(IDisposable d)
 }
 ```
 ![image](https://user-images.githubusercontent.com/523221/126960839-6bc3b110-014a-4680-abd8-44c9e7e01765.png)
+&nbsp;&nbsp;&nbsp;&nbsp;*^ codegen diff for a case where MyType::Dispose is empty*
 
+  
 
-* Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478). Namely, this [code](https://github.com/dotnet/runtime/blob/c93bb62e33934c3b8b6b1d293612d44360483bd8/src/coreclr/jit/inlinepolicy.cpp#L1675-L1697).
-* JIT re-order blocks to keep hot ones closer to each other and to the beginning of the method.
+* JIT re-orders blocks to keep hot ones closer to each other and pushes cold ones to the end of the method.
 ```csharp
 void DoWork(int a)
 {
@@ -34,7 +36,7 @@ void DoWork(int a)
         DoWork2();
 }
 ```
-is transformed into:
+&nbsp;&nbsp;&nbsp;&nbsp;is transformed into:
 ```csharp
 void DoWork(int a)
 {
@@ -46,7 +48,7 @@ void DoWork(int a)
 }
 ```
 * Some optimizations such as Loop Clonning, Inline Casts, etc. aren't applied in cold blocks
-* Guided AOT: We can prejit only the code that was executed during the test run. It should noticeably reduce binary size of R2R'd images as the cold methods won't be prejitted at all.
+* Guided AOT: We can prejit only the code that was executed during the test run. It should noticeably reduce binary size of R2R'd images as the cold methods won't be prejitted at all. For that, you need to pass `--partial` flag to crossgen2 along with the actual MIBC data.
 
 
 ## Prerequisites ###
