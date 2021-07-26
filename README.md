@@ -84,7 +84,7 @@ Running...
 [8/9]: 54 ms.
 [9/9]: 54 ms.
 ```
-2) Run with static pgo (steps from the **How to run the sample** section above):
+2) Run with static pgo (steps from the **[How to run the sample](https://github.com/EgorBo/StaticPGO_Example#how-to-run-the-sample)** section above):
 ```
 Running...
 [0/9]: 19 ms.
@@ -98,7 +98,7 @@ Running...
 [8/9]: 18 ms.
 [9/9]: 18 ms.
 ```
-3) Run with dynamic PGO (steps from **Usage** aren't needed. Only just set the following env.variables in your console):
+3) Run with dynamic PGO (steps from **[How to run the sample](https://github.com/EgorBo/StaticPGO_Example#how-to-run-the-sample)** aren't needed. Only just set the following env.variables in your console):
 ```ps1
 DOTNET_ReadyToRun=0           # ignore AOT code
 DOTNET_TieredPGO=1            # enable dynamic pgo
