@@ -61,8 +61,8 @@ First, we need to build a special version of our sample and run it in order to c
 ```ps1
 dotnet publish -c Release -r win-x64 /p:CollectMibc=true # or linux-x64, osx-arm64, etc..
 ```
-The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO_Example/blob/c1ba286cc4e63734ab7c0b3f81349948d39427f2/App.csproj#L29-L53) to do that job. Basically, it runs a fully instrumented build, collect traces, convert them to a special format (*.mibc) that we can use to optimize our app.
-Now we can re-publish the app using the PGO data we collected:
+The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO_Example/blob/c1ba286cc4e63734ab7c0b3f81349948d39427f2/App.csproj#L29-L53) to do that job. Basically, it runs a fully instrumented build, collects traces, converts them to a special format *.mibc that we can use to optimize our app.
+Now we can re-publish the app using the PGO data we collected previously:
 
 ```ps1
 dotnet publish -c Release -r win-x64 /p:PgoData=pgo.mibc
