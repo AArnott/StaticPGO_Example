@@ -1,6 +1,8 @@
 
 This project demonstrates how to collect a static profile (PGO aka Profile-Guided Optimization) for a simple console app in order to make it faster. The profile describes a typical behavior of an app: which methods are executed, which parts of those methods are hot or cold, actual types of objects hidden under abstractions, etc. It can be collected dynamically via tiered compilation or statically where we build a special version of an app, run it, simulate typical workloads, save the resulting profile to a file and then re-use it in production. Both approaches have pros and cons, and since the static one is a bit more difficult to set up - I'm going to focus on it.
 
+**NOTE:** The workflow to collect static profiles is not final yet and can be improved/simplied in the future versions of daily builds.
+
 ## What exactly PGO can optimize for us?
 * Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478). Namely, this [code](https://github.com/dotnet/runtime/blob/c93bb62e33934c3b8b6b1d293612d44360483bd8/src/coreclr/jit/inlinepolicy.cpp#L1675-L1697).
 * Most virtual calls can be devirtualized using PGO data, e.g.:
