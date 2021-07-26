@@ -53,20 +53,20 @@ void DoWork(int a)
 *  The **latest** daily build of .NET 6.0 from [here](https://github.com/dotnet/installer/blob/main/README.md#installers-and-binaries) (should be at least 7/25/2021)
 *  `dotnet tool install --global dotnet-pgo` tool. See [dotnet-pgo.md](https://github.com/dotnet/runtime/blob/main/docs/design/features/dotnet-pgo.md)
 
-## Usage
-First, we need to build a special version of our app and have a test run:
+## How to run the sample
+First, we need to build a special version of our sample and run it in order to collect a profile:
 ```ps1
 dotnet publish -c Release -r win-x64 /p:CollectMibc=true # or linux-x64, osx-arm64, etc..
 ```
-The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO_Example/blob/c1ba286cc4e63734ab7c0b3f81349948d39427f2/App.csproj#L29-L53) to do that job. Basically, it runs a fully instrumented build, collect traces, convert them to a special format (*.mibc) that we can use to optimize our app:
+The console app has a special msbuild [task](https://github.com/EgorBo/StaticPGO_Example/blob/c1ba286cc4e63734ab7c0b3f81349948d39427f2/App.csproj#L29-L53) to do that job. Basically, it runs a fully instrumented build, collect traces, convert them to a special format (*.mibc) that we can use to optimize our app.
+Now we can re-publish the app using the PGO data we collected:
 
 ```ps1
 dotnet publish -c Release -r win-x64 /p:PgoData=pgo.mibc
 ```
+Let's compare performance for StaticPGO, DynamicPGO and Default modes:
 
-Now compare the performance results after PGO with simple `dotnet run -c Release`.
-
-## Results
+## Performance results
 1) Normal run `dotnet run -c Release`:
 ```
 Running...
@@ -81,7 +81,7 @@ Running...
 [8/9]: 54 ms.
 [9/9]: 54 ms.
 ```
-2) Run with static pgo (steps from the **Usage** section above):
+2) Run with static pgo (steps from the **How to run the sample** section above):
 ```
 Running...
 [0/9]: 19 ms.
