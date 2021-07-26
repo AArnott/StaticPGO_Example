@@ -52,7 +52,7 @@ void DoWork(int a)
 
 ## Prerequisites ###
 *  The **latest** daily build of .NET 6.0 from [here](https://github.com/dotnet/installer/blob/main/README.md#installers-and-binaries) (should be at least 7/25/2021)
-*  `dotnet tool install --global dotnet-pgo` tool. See [dotnet-pgo.md](https://github.com/dotnet/runtime/blob/main/docs/design/features/dotnet-pgo.md)
+*  `dotnet tool install --global dotnet-pgo --version "6.0.0-rc.1.21375.2"` tool. See [dotnet-pgo.md](https://github.com/dotnet/runtime/blob/main/docs/design/features/dotnet-pgo.md)
 
 ## How to run the sample
 First, we need to build a special version of our sample and run it in order to collect a profile:
