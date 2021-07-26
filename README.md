@@ -4,7 +4,7 @@ This project demonstrates how to collect a static profile (PGO) for a simple con
 
 ## What exactly PGO can optimize for us?
 * Inliner relies on PGO data and can be very aggressive for hot paths, see [dotnet/runtime#52708](https://github.com/dotnet/runtime/pull/52708) and [dotnet/runtime#55478](https://github.com/dotnet/runtime/pull/55478). Namely, this [code](https://github.com/dotnet/runtime/blob/c93bb62e33934c3b8b6b1d293612d44360483bd8/src/coreclr/jit/inlinepolicy.cpp#L1675-L1697).
-* Most virtual calls can be devirtualized using PGO data:
+* Most virtual calls can be devirtualized using PGO data, e.g.:
 ```csharp
 void DisposeMe(IDisposable d)
 {
