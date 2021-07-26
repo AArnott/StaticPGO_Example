@@ -48,7 +48,7 @@ void DoWork(int a)
         DoWork1();
 }
 ```
-* Some optimizations such as Loop Clonning, Inline Casts, etc. aren't applied in cold blocks
+* Some optimizations such as Loop Clonning, Inlined Casts, etc. aren't applied in cold blocks
 * Guided AOT: We can prejit only the code that was executed during the test run. It should noticeably reduce binary size of R2R'd images as the cold methods won't be prejitted at all. For that, you need to pass `--partial` flag to crossgen2 along with the actual MIBC data.
 
 
@@ -100,9 +100,9 @@ Running...
 ```
 3) Run with dynamic PGO (steps from **[How to run the sample](https://github.com/EgorBo/StaticPGO_Example#how-to-run-the-sample)** aren't needed. Only just set the following env.variables in your console):
 ```ps1
-DOTNET_ReadyToRun=0           # ignore AOT code
-DOTNET_TieredPGO=1            # enable dynamic pgo
-DOTNET_TC_QuickJitForLoops=1  # don't bypass tier0 for methods with loops
+$env:DOTNET_ReadyToRun=0           # ignore AOT code
+$env:DOTNET_TieredPGO=1            # enable dynamic pgo
+$env:DOTNET_TC_QuickJitForLoops=1  # don't bypass tier0 for methods with loops
 ```
 ```
 Running...
