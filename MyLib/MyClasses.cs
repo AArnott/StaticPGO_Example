@@ -1,5 +1,5 @@
 ﻿
-// These types were moved to a separate lib to complicate R2R's life
+// These types were moved to a separate lib to complicate R2R's life (only Composite mode can handle it now)
 
 public interface IFoo
 {
