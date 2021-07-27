@@ -40,6 +40,7 @@
 			<Env Include="DOTNET_JitCollect64BitCounts=1" />
 		</ItemGroup>
 
+		<!-- Launch the instrumented build via dotnet-trace in order to save traces -->
 		<Exec Command="dotnet trace collect --providers Microsoft-Windows-DotNETRuntime:0x1F000080018:5 -- dotnet $(ProjectName).dll" 
 		      EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
 
