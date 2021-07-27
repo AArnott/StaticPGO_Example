@@ -44,11 +44,11 @@
 		<Exec Command="dotnet trace collect --providers Microsoft-Windows-DotNETRuntime:0x1F000080018:5 -- dotnet $(ProjectName).dll" 
 		      EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
 
-		<!-- Convert nettrace to mibc, make sure 'dotnet-pgo' tool is installed: -->
+		<!-- Convert nettrace to mibc -->
 		<Exec Command="dotnet-pgo create-mibc -t $(PublishDir)trace.nettrace -o $(MSBuildThisFileDirectory)/pgo.mibc" />
 	</Target>
 	
-	<!-- Run app that was optimized with opt.mibc profile: -->
+	<!-- Run app that was optimized with pgo.mibc profile: -->
 	<Target Name="RunFinal" AfterTargets="Publish" Condition="$(CollectMibc) != 'true'">
 		<Exec Command="dotnet $(ProjectName).dll" WorkingDirectory="$(PublishDir)" />
 	</Target>
