@@ -18,7 +18,7 @@
 
 		<!-- Quite a weird syntax for passing additional args to crossgen2
 		     I hope we'll come up with something better than this in the future -->
-		<PublishReadyToRunCrossgen2ExtraArgs>--embed-pgo-data%3b--mibc%3a$(PgoData)</PublishReadyToRunCrossgen2ExtraArgs>
+		<PublishReadyToRunCrossgen2ExtraArgs>--inputbubble%3b--instruction-set:avx2%3b--compilebubblegenerics%3b--embed-pgo-data%3b--mibc%3a$(PgoData)</PublishReadyToRunCrossgen2ExtraArgs>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -33,11 +33,6 @@
 
 		<!-- Special envvars for collecting a static profile: we need to disable R2R, tier1, enable tracing, etc. -->
 		<ItemGroup>
-			<!-- NOTE: we can use 'dotnet trace' tool instead of these variables: -->
-			<Env Include="DOTNET_EnableEventPipe=1" />
-			<Env Include="DOTNET_EventPipeConfig=Microsoft-Windows-DotNETRuntime:0x1F000080018:5" /> <!-- I hope that category will have a meaningful name -->
-			<Env Include="DOTNET_EventPipeOutputPath=trace.nettrace" />
-
 			<Env Include="DOTNET_ReadyToRun=0" /> <!-- Disable AOT -->
 			<Env Include="DOTNET_TieredPGO=1" /> <!-- Enable instrumentation in tier0 -->
 			<Env Include="DOTNET_TC_CallCounting=0" /> <!-- Never promote methods to tier1 -->
@@ -45,18 +40,12 @@
 			<Env Include="DOTNET_JitCollect64BitCounts=1" />
 		</ItemGroup>
 
-		<!-- Run & collect traces: -->
-		<Exec Command="dotnet $(ProjectName).dll" EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
-
-		<!-- Not sure how to workaround "trace is used by another process so I'm just duplicating it: -->
-		<Copy SourceFiles="$(PublishDir)trace.nettrace" DestinationFiles="$(PublishDir)traceCopy.nettrace" />
+		<Exec Command="dotnet trace collect --providers Microsoft-Windows-DotNETRuntime:0x1F000080018:5 -- dotnet $(ProjectName).dll" 
+		      EnvironmentVariables="@(Env)" WorkingDirectory="$(PublishDir)" />
 
 		<!-- Convert nettrace to mibc, make sure 'dotnet-pgo' tool is installed: -->
-		<Exec Command="dotnet-pgo create-mibc -t $(PublishDir)traceCopy.nettrace -o $(MSBuildThisFileDirectory)/pgo.mibc"
-		      EnvironmentVariables="@(Env)" />
+		<Exec Command="dotnet-pgo create-mibc -t $(PublishDir)trace.nettrace -o $(MSBuildThisFileDirectory)/pgo.mibc" />
 	</Target>
-
-
 	
 	<!-- Run app that was optimized with opt.mibc profile: -->
 	<Target Name="RunFinal" AfterTargets="Publish" Condition="$(CollectMibc) != 'true'">
