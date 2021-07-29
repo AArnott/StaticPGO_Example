@@ -38,6 +38,7 @@
 			<Env Include="DOTNET_TC_CallCounting=0" /> <!-- Never promote methods to tier1 -->
 			<Env Include="DOTNET_TC_QuickJitForLoops=1" /> <!-- Don't bypass tier0 for methods with loops -->
 			<Env Include="DOTNET_JitCollect64BitCounts=1" />
+			<Env Include="DOTNET_JitEdgeProfiling=0" />
 		</ItemGroup>
 
 		<!-- Launch the instrumented build via dotnet-trace in order to save traces -->
