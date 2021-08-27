@@ -1,5 +1,5 @@
 
-This project demonstrates how to collect a static profile (PGO aka Profile-Guided Optimization) for a simple console app in order to make it faster. The profile describes a typical behavior of an app: which methods are executed, which parts of those methods are hot or cold, actual types of objects hidden under abstractions, etc. It can be collected dynamically via tiered compilation or statically where we build a special version of an app, run it, simulate typical workloads, save the resulting profile to a file and then re-use it in production. Both approaches have pros and cons, and since the static one is a bit more difficult to set up - I'm going to focus on it.
+This project demonstrates how to collect a static profile (PGO aka Profile-Guided Optimization) for a simple console app in order to make it faster. The profile describes a typical behavior of an app: which parts of methods are hot or cold, actual types of objects hidden under abstractions, etc. It can be collected dynamically via tiered compilation or statically where we build a special version of an app (aka "Instrumented Build"), run it, simulate typical workloads, save the resulting profile to a file and then re-use it in production. Both approaches have pros and cons.
 
 **NOTE:** The workflow to collect static profiles is not final yet and can be improved/simplied in the future versions of daily builds.
 
@@ -49,8 +49,32 @@ void DoWork(int a)
 }
 ```
 * Some optimizations such as Loop Clonning, Inlined Casts, etc. aren't applied in cold blocks
-* Guided AOT: We can prejit only the code that was executed during the test run. It should noticeably reduce binary size of R2R'd images as the cold methods won't be prejitted at all. For that, you need to pass `--partial` flag to crossgen2 along with the actual MIBC data.
+* **Guided AOT**: We can prejit only the code that was executed during the test run. It should noticeably reduce binary size of R2R'd images as the cold methods won't be prejitted at all. For that, you need to pass `--partial` flag to crossgen2 along with the actual MIBC data.
 
+## DynamicPGO vs StaticPGO
+
+As I already mentioned, there are pros and cons.
+
+### DynamicPGO
+#### Pros:
+- Easy to use: you just need to set the following env. variables: `DOTNET_TC_QuickJitForLoops=1`, `DOTNET_TieredPGO=1` and `DOTNET_ReadyToRun=0`
+- Collects actual profile live - you don't need to worry about "Is my static profile still relevant?" or "Does my static profile cover this specific scenario?"
+
+#### Cons:
+- Noticeably slower start - mostly because for better results we need to turn off all the prejitted (AOT) code + we emit a lot of additional block counters and class probes in tier0.
+- We don't support context-sensitive PGO and de-optimizations yet so we bake profile data into methods after just 30 calls and that data wlll be there forever for all possible callsites, and for some of them it might be less relevant.
+- `DOTNET_TC_QuickJitForLoops=1` sometimes leads to performance issues known as "Cold loop - hot body" and needs OSR in JIT which is not finished yet.
+
+### StaticPGO
+#### Pros
+- Doesn't affect startup time or even improves it
+- Can be used for Guided-AOT where we prejit only the code that was invoked during the test run. It makes AOT images smaller.
+- Since during the test run we never promote methods to tier1 - it's able to avoid that "context-sensitive" issue by collecting all possible scenarios for a specific method.
+
+#### Cons
+- Difficult to setup, it requires special steps to create an instrumented build and simulate typical workloads
+- It has to be re-collected once something is changed
+- Currently it requires Composite-R2R mode (with `compilebubblegenerics`) for better results.
 
 ## Prerequisites ###
 *  The **latest** daily build of .NET 6.0 from [here](https://github.com/dotnet/installer/blob/main/README.md#installers-and-binaries) (should be at least 7/25/2021)
